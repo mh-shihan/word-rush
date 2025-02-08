@@ -1,9 +1,9 @@
-import "./App.css";
+import BalloonWordRush from "./BalloonWordRush";
 
 function App() {
   return (
     <>
-      <h1>Vite + React</h1>
+      <BalloonWordRush></BalloonWordRush>
     </>
   );
 }
