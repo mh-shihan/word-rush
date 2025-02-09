@@ -35,7 +35,7 @@ const Balloon = ({ letter, onPop, position }) => (
   </div>
 );
 
-const BalloonWordRush = () => {
+const GamePage = () => {
   const [currentCity, setCurrentCity] = useState("");
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -188,4 +188,4 @@ const BalloonWordRush = () => {
   );
 };
 
-export default BalloonWordRush;
+export default GamePage;
