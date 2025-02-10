@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 // List of Bangladeshi cities
 const CITIES = [
@@ -162,12 +163,21 @@ const GamePage = () => {
               <h2 className="text-2xl font-bold mb-4">
                 {gameStatus === "won" ? "Congratulations!" : "Time's Up!"}
               </h2>
-              <button
-                onClick={startNewGame}
-                className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-              >
-                Play Again
-              </button>
+              <div className="flex gap-10">
+                {/* Status Button */}
+                <button
+                  onClick={startNewGame}
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 cursor-pointer"
+                >
+                  Play Again
+                </button>
+                {/* Exit Button */}
+                <Link to="/">
+                  <button className="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 cursor-pointer">
+                    Exit!
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         )}
