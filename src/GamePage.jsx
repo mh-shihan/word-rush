@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Howl } from "howler";
 
 // List of Bangladeshi cities
 const CITIES = [
@@ -14,12 +15,6 @@ const CITIES = [
 ];
 
 // Sound effects (using base64 encoded short audio)
-const correctSound = new Audio(
-  "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"
-);
-const incorrectSound = new Audio(
-  "data:audio/wav;base64,UklGRrZgT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ"
-);
 
 const Balloon = ({ letter, onPop, position }) => (
   <div
@@ -42,6 +37,9 @@ const GamePage = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const [gameStatus, setGameStatus] = useState("playing");
   const [balloons, setBalloons] = useState([]);
+
+  // Audion State
+  const [isBGMPlaying, setBGMPlaying] = useState(false);
 
   const handlePop = (letter) => {
     if (gameStatus !== "playing") return;
@@ -118,19 +116,20 @@ const GamePage = () => {
     return () => clearInterval(timer);
   }, [gameStatus]);
 
-  // const handlePop = (letter) => {
-  //   if (gameStatus !== "playing") return;
+  // Sound effects
+  const bgm = "/src/assets/audio/bgm_cut.mp3";
+  useEffect(() => {
+    const sound = new Howl({
+      src: [bgm],
+      loop: true,
+      volume: 0.5,
+    });
+    sound.play();
 
-  //   const expectedLetter = currentCity[selectedLetters.length];
-  //   if (letter === expectedLetter) {
-  //     const newSelected = [...selectedLetters, letter];
-  //     setSelectedLetters(newSelected);
-
-  //     if (newSelected.join("") === currentCity) {
-  //       setGameStatus("won");
-  //     }
-  //   }
-  // };
+    return () => {
+      sound.stop();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-blue-100 relative overflow-hidden">
@@ -144,7 +143,6 @@ const GamePage = () => {
 
         <div className="text-xl font-bold">Time: {timeLeft}s</div>
       </div>
-
       {/* Balloons */}
       <div>
         {balloons.map((balloon, i) => (
