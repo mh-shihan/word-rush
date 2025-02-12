@@ -16,8 +16,6 @@ const CITIES = [
   "Mymensingh",
 ];
 
-// Sound effects (using base64 encoded short audio)
-
 const Balloon = ({ letter, onPop, position }) => (
   <div
     className="absolute w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer transition-transform"
@@ -41,8 +39,8 @@ const GamePage = () => {
   const [balloons, setBalloons] = useState([]);
 
   // Audion State
-  const [isBGMPlaying, setIsBGMPlaying] = useState(true);
-  const [audioBGM, setAudioBGM] = useState();
+  const [isBGMPlaying, setIsBGMPlaying] = useState(false);
+  const [audioBGM, setAudioBGM] = useState(null);
 
   // Sound effects
   useEffect(() => {
@@ -54,16 +52,30 @@ const GamePage = () => {
   }, []);
 
   const toggleMusic = () => {
+    if (!audioBGM) return;
+
+    console.log(`Toggle Music ${isBGMPlaying}`);
     if (isBGMPlaying) {
-      audioBGM.play();
-    } else {
       audioBGM.pause();
       audioBGM.currentTime = 0;
+    } else {
+      audioBGM.play();
     }
   };
 
   const handleOnClick = () => {
+    console.log(
+      "---------Handle Click Before set",
+      isBGMPlaying,
+      "------------------------"
+    );
     setIsBGMPlaying(!isBGMPlaying);
+    console.log(
+      "---------Handle Click After set",
+      isBGMPlaying,
+      "------------------------"
+    );
+
     toggleMusic();
   };
 
@@ -77,8 +89,6 @@ const GamePage = () => {
       setSelectedLetters(newSelected);
 
       if (newSelected.join("") === currentCity) {
-        setIsBGMPlaying(false);
-        toggleMusic();
         setGameStatus("won");
       }
     }
@@ -93,7 +103,7 @@ const GamePage = () => {
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
     setCurrentCity(city);
     setSelectedLetters([]);
-    setTimeLeft(5);
+    setTimeLeft(30);
     setGameStatus("playing");
     generateBalloons(city);
   };
@@ -125,15 +135,17 @@ const GamePage = () => {
   };
 
   useEffect(() => {
-    if (gameStatus !== "playing") return;
+    if (gameStatus !== "playing") {
+      if (isBGMPlaying) toggleMusic();
+      return;
+    }
 
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           setGameStatus("lost");
           clearInterval(timer);
-          setIsBGMPlaying(false);
-          toggleMusic();
+
           return 0;
         }
         return prev - 1;
@@ -160,7 +172,7 @@ const GamePage = () => {
             Time: {timeLeft}s
           </div>
           <button className=" text-purple-500 rounded-full mb-2">
-            {isBGMPlaying ? (
+            {isBGMPlaying === true ? (
               <MdMusicNote
                 onClick={handleOnClick}
                 className="text-xl cursor-pointer"
