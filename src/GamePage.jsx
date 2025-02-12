@@ -44,6 +44,29 @@ const GamePage = () => {
   const [isBGMPlaying, setIsBGMPlaying] = useState(true);
   const [audioBGM, setAudioBGM] = useState();
 
+  // Sound effects
+  useEffect(() => {
+    const newAudio = new Audio(bgm);
+    newAudio.loop = true;
+    newAudio.volume = 0.5;
+
+    setAudioBGM(newAudio);
+  }, []);
+
+  const toggleMusic = () => {
+    if (isBGMPlaying) {
+      audioBGM.play();
+    } else {
+      audioBGM.pause();
+      audioBGM.currentTime = 0;
+    }
+  };
+
+  const handleOnClick = () => {
+    setIsBGMPlaying(!isBGMPlaying);
+    toggleMusic();
+  };
+
   const handlePop = (letter) => {
     if (gameStatus !== "playing") return;
 
@@ -54,6 +77,8 @@ const GamePage = () => {
       setSelectedLetters(newSelected);
 
       if (newSelected.join("") === currentCity) {
+        setIsBGMPlaying(false);
+        toggleMusic();
         setGameStatus("won");
       }
     }
@@ -68,7 +93,7 @@ const GamePage = () => {
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
     setCurrentCity(city);
     setSelectedLetters([]);
-    setTimeLeft(15);
+    setTimeLeft(5);
     setGameStatus("playing");
     generateBalloons(city);
   };
@@ -107,6 +132,8 @@ const GamePage = () => {
         if (prev <= 1) {
           setGameStatus("lost");
           clearInterval(timer);
+          setIsBGMPlaying(false);
+          toggleMusic();
           return 0;
         }
         return prev - 1;
@@ -115,37 +142,6 @@ const GamePage = () => {
 
     return () => clearInterval(timer);
   }, [gameStatus]);
-
-  // Sound effects
-  useEffect(() => {
-    const newAudio = new Audio(bgm);
-    newAudio.loop = true;
-    newAudio.volume = 0.5;
-
-    setAudioBGM(newAudio);
-  }, []);
-
-  // useEffect(() => {
-  //   audioBGM.play();
-  // }, []);
-
-  const toggleMusic = () => {
-    if (isBGMPlaying) {
-      audioBGM.play();
-    } else {
-      audioBGM.pause();
-      audioBGM.currentTime = 0;
-    }
-  };
-
-  const handleOnClick = () => {
-    toggleMusic();
-    setIsBGMPlaying(!isBGMPlaying);
-  };
-
-  // if (isBGMPlaying == true) {
-  //   audioBGM.play();
-  // }
 
   return (
     <div className="h-[100vh] bg-gradient-to-r from-gray-900 via-gray-800 to-black relative overflow-hidden">
