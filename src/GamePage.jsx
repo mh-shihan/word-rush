@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Howl } from "howler";
+import bgm from "./assets/audio/bgm_cut.mp3";
+import { MdMusicNote } from "react-icons/md";
+import { MdMusicOff } from "react-icons/md";
 
 // List of Bangladeshi cities
 const CITIES = [
@@ -18,7 +20,7 @@ const CITIES = [
 
 const Balloon = ({ letter, onPop, position }) => (
   <div
-    className="absolute w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer transition-transform"
+    className="absolute w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center text-white text-2xl cursor-pointer transition-transform"
     style={{
       left: `${position.x}%`,
       top: `${position.y}%`,
@@ -39,7 +41,8 @@ const GamePage = () => {
   const [balloons, setBalloons] = useState([]);
 
   // Audion State
-  const [isBGMPlaying, setBGMPlaying] = useState(false);
+  const [isBGMPlaying, setIsBGMPlaying] = useState(true);
+  const [audioBGM, setAudioBGM] = useState();
 
   const handlePop = (letter) => {
     if (gameStatus !== "playing") return;
@@ -47,15 +50,12 @@ const GamePage = () => {
     const expectedLetter = currentCity[selectedLetters.length];
 
     if (letter === expectedLetter) {
-      correctSound.play();
       const newSelected = [...selectedLetters, letter];
       setSelectedLetters(newSelected);
 
       if (newSelected.join("") === currentCity) {
         setGameStatus("won");
       }
-    } else {
-      incorrectSound.play();
     }
   };
 
@@ -68,7 +68,7 @@ const GamePage = () => {
     const city = CITIES[Math.floor(Math.random() * CITIES.length)];
     setCurrentCity(city);
     setSelectedLetters([]);
-    setTimeLeft(30);
+    setTimeLeft(15);
     setGameStatus("playing");
     generateBalloons(city);
   };
@@ -117,31 +117,66 @@ const GamePage = () => {
   }, [gameStatus]);
 
   // Sound effects
-  const bgm = "/src/assets/audio/bgm_cut.mp3";
   useEffect(() => {
-    const sound = new Howl({
-      src: [bgm],
-      loop: true,
-      volume: 0.5,
-    });
-    sound.play();
+    const newAudio = new Audio(bgm);
+    newAudio.loop = true;
+    newAudio.volume = 0.5;
 
-    return () => {
-      sound.stop();
-    };
+    setAudioBGM(newAudio);
   }, []);
 
+  // useEffect(() => {
+  //   audioBGM.play();
+  // }, []);
+
+  const toggleMusic = () => {
+    if (isBGMPlaying) {
+      audioBGM.play();
+    } else {
+      audioBGM.pause();
+      audioBGM.currentTime = 0;
+    }
+  };
+
+  const handleOnClick = () => {
+    toggleMusic();
+    setIsBGMPlaying(!isBGMPlaying);
+  };
+
+  // if (isBGMPlaying == true) {
+  //   audioBGM.play();
+  // }
+
   return (
-    <div className="min-h-screen bg-blue-100 relative overflow-hidden">
+    <div className="h-[100vh] bg-gradient-to-r from-gray-900 via-gray-800 to-black relative overflow-hidden">
       {/* Game Info */}
       <div className="p-4 flex justify-between">
-        <div className="text-xl font-bold">City: {currentCity}</div>
+        <div className="text-cyan-400 font-bold text-3xl font-mono">
+          {currentCity}
+        </div>
         {/* Selected Letters */}
-        <div className="text-center text-2xl mt-4">
+        <div className="text-cyan-400  text-4xl font-mono text-center  mt-4">
           {selectedLetters.join(" ")}
         </div>
 
-        <div className="text-xl font-bold">Time: {timeLeft}s</div>
+        <div className="flex  justify-center gap-2 ">
+          <div className="text-cyan-400 font-mono  text-xl font-bold">
+            Time: {timeLeft}s
+          </div>
+          <button className=" text-purple-500 rounded-full mb-2">
+            {isBGMPlaying ? (
+              <MdMusicNote
+                onClick={handleOnClick}
+                className="text-xl cursor-pointer"
+              />
+            ) : (
+              <MdMusicOff
+                onClick={handleOnClick}
+                className="text-[16px] cursor-pointer"
+              />
+            )}
+          </button>
+        </div>
       </div>
       {/* Balloons */}
       <div>
