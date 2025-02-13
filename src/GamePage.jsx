@@ -6,6 +6,7 @@ import { MdMusicOff } from "react-icons/md";
 import balloonPunch from "./assets/audio/balloon_punch.wav";
 import winningMp3 from "./assets/audio/winning.mp3";
 import gameOver from "./assets/audio/game-over.mp3";
+import confetti from "https://cdn.skypack.dev/canvas-confetti";
 
 // List of Bangladeshi cities
 const CITIES = [
@@ -54,8 +55,11 @@ const GamePage = () => {
     const newBalloonPunch = new Audio(balloonPunch);
     const newWinAudio = new Audio(winningMp3);
     const newTimeOutAudio = new Audio(gameOver);
+
     newAudio.loop = true;
     newAudio.volume = 0.5;
+    newWinAudio.volume = 0.3;
+    newBalloonPunch.volume = 0.5;
 
     setAudioBGM(newAudio);
     setBalloonPop(newBalloonPunch);
@@ -139,8 +143,10 @@ const GamePage = () => {
   useEffect(() => {
     if (gameStatus !== "playing") {
       if (isBGMPlaying) toggleMusic();
-      if (gameStatus === "won") winAudio.play();
-      else timeOutAudio.play();
+      if (gameStatus === "won") {
+        winAudio.play();
+        confetti();
+      } else timeOutAudio.play();
       return;
     }
 
@@ -163,11 +169,11 @@ const GamePage = () => {
     <div className="h-[100vh] bg-gradient-to-r from-gray-900 via-gray-800 to-black relative overflow-hidden">
       {/* Game Info */}
       <div className="p-4 flex justify-between">
-        <div className="text-cyan-400 font-bold text-3xl font-mono">
+        <div className="text-cyan-400 font-bold text-xl md:text-3xl font-mono">
           {currentCity}
         </div>
         {/* Selected Letters */}
-        <div className="text-cyan-400  text-4xl font-mono text-center  mt-4">
+        <div className="text-cyan-400  text-2xl md:text-4xl font-mono text-center  mt-6 md:mt-4">
           {selectedLetters.join(" ")}
         </div>
 
@@ -175,7 +181,7 @@ const GamePage = () => {
           <div className="text-cyan-400 font-mono  text-xl font-bold">
             Time: {timeLeft}s
           </div>
-          <button className=" text-purple-500 rounded-full mb-2">
+          <button className=" text-purple-500 rounded-full md:mb-2">
             {isBGMPlaying ? (
               <MdMusicNote
                 onClick={handleOnClick}
