@@ -85,8 +85,8 @@ const GamePage = () => {
   };
 
   const handlePop = (letter) => {
-    balloonPop.play();
     if (gameStatus !== "playing") return;
+    balloonPop.play();
 
     const expectedLetter = currentCity[selectedLetters.length];
 
