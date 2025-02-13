@@ -53,12 +53,6 @@ The main goal of the game is to correctly spell the city name displayed at the *
 - **More Visual Effects**: Enhance animations and effects to make the game more engaging.
 - **Custom Themes**: Allow players to choose different themes for the game interface.
 
-## 📷 Screenshot
-
-![Game Screenshot](https://i.ibb.co.com/HDDZ0KMt/word-rush-ss1.png)
-![Game Screenshot](https://i.ibb.co.com/1YJdZp8j/word-rush-ss2.png)
-![Game Screenshot](https://i.ibb.co.com/bjpYQp6h/word-rush-ss3.png)
-
 ## 🔗 Live Demo
 
 👉 [Play Word Rush - Balloon Popper Game](https://ornate-pithivier-164a6b.netlify.app)
