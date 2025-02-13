@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import bgm from "./assets/audio/bgm_cut.mp3";
 import { MdMusicNote } from "react-icons/md";
 import { MdMusicOff } from "react-icons/md";
+import balloonPunch from "./assets/audio/balloon_punch.wav";
+import winningMp3 from "./assets/audio/winning.mp3";
+import gameOver from "./assets/audio/game-over.mp3";
 
 // List of Bangladeshi cities
 const CITIES = [
@@ -38,23 +41,31 @@ const GamePage = () => {
   const [gameStatus, setGameStatus] = useState("playing");
   const [balloons, setBalloons] = useState([]);
 
-  // Audion State
+  // Audio State
   const [isBGMPlaying, setIsBGMPlaying] = useState(false);
   const [audioBGM, setAudioBGM] = useState(null);
+  const [balloonPop, setBalloonPop] = useState(null);
+  const [winAudio, setWinAudio] = useState(null);
+  const [timeOutAudio, setTimeOutAudio] = useState(null);
 
   // Sound effects
   useEffect(() => {
     const newAudio = new Audio(bgm);
+    const newBalloonPunch = new Audio(balloonPunch);
+    const newWinAudio = new Audio(winningMp3);
+    const newTimeOutAudio = new Audio(gameOver);
     newAudio.loop = true;
     newAudio.volume = 0.5;
 
     setAudioBGM(newAudio);
+    setBalloonPop(newBalloonPunch);
+    setWinAudio(newWinAudio);
+    setTimeOutAudio(newTimeOutAudio);
   }, []);
 
   const toggleMusic = () => {
     if (!audioBGM) return;
 
-    console.log(`Toggle Music ${isBGMPlaying}`);
     if (isBGMPlaying) {
       audioBGM.pause();
       audioBGM.currentTime = 0;
@@ -64,22 +75,13 @@ const GamePage = () => {
   };
 
   const handleOnClick = () => {
-    console.log(
-      "---------Handle Click Before set",
-      isBGMPlaying,
-      "------------------------"
-    );
     setIsBGMPlaying(!isBGMPlaying);
-    console.log(
-      "---------Handle Click After set",
-      isBGMPlaying,
-      "------------------------"
-    );
 
     toggleMusic();
   };
 
   const handlePop = (letter) => {
+    balloonPop.play();
     if (gameStatus !== "playing") return;
 
     const expectedLetter = currentCity[selectedLetters.length];
@@ -137,6 +139,8 @@ const GamePage = () => {
   useEffect(() => {
     if (gameStatus !== "playing") {
       if (isBGMPlaying) toggleMusic();
+      if (gameStatus === "won") winAudio.play();
+      else timeOutAudio.play();
       return;
     }
 
@@ -172,7 +176,7 @@ const GamePage = () => {
             Time: {timeLeft}s
           </div>
           <button className=" text-purple-500 rounded-full mb-2">
-            {isBGMPlaying === true ? (
+            {isBGMPlaying ? (
               <MdMusicNote
                 onClick={handleOnClick}
                 className="text-xl cursor-pointer"
@@ -180,7 +184,7 @@ const GamePage = () => {
             ) : (
               <MdMusicOff
                 onClick={handleOnClick}
-                className="text-[16px] cursor-pointer"
+                className="text-[20px] cursor-pointer"
               />
             )}
           </button>
@@ -208,7 +212,7 @@ const GamePage = () => {
                 {/* Status Button */}
                 <button
                   onClick={startNewGame}
-                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 cursor-pointer"
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 cursor-pointer border-transparent"
                 >
                   Play Again
                 </button>
