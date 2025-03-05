@@ -44,6 +44,7 @@ const GamePage = () => {
 
   // Audio State
   const [isBGMPlaying, setIsBGMPlaying] = useState(true);
+  const [userToggledBGM, setUserToggledBGM] = useState(false);
   const [audioBGM, setAudioBGM] = useState(null);
   const [balloonPop, setBalloonPop] = useState(null);
   const [winAudio, setWinAudio] = useState(null);
@@ -51,20 +52,31 @@ const GamePage = () => {
 
   // Sound effects
   useEffect(() => {
-    const newAudio = new Audio(bgm);
     const newBalloonPunch = new Audio(balloonPunch);
+    newBalloonPunch.volume = 0.5;
+
     const newWinAudio = new Audio(winningMp3);
+    newWinAudio.volume = 0.3;
+
     const newTimeOutAudio = new Audio(gameOver);
 
+    const newAudio = new Audio(bgm);
     newAudio.loop = true;
     newAudio.volume = 0.5;
-    newWinAudio.volume = 0.3;
-    newBalloonPunch.volume = 0.5;
+
+    // Autoplay on initial load
+    if (isBGMPlaying) {
+      newAudio
+        .play()
+        .catch((error) => console.log("Autoplay prevented:", error));
+    }
 
     setAudioBGM(newAudio);
     setBalloonPop(newBalloonPunch);
     setWinAudio(newWinAudio);
     setTimeOutAudio(newTimeOutAudio);
+
+    return () => newAudio.pause(); // Cleanup
   }, []);
 
   const toggleMusic = () => {
@@ -80,7 +92,7 @@ const GamePage = () => {
 
   const handleOnClick = () => {
     setIsBGMPlaying(!isBGMPlaying);
-
+    setUserToggledBGM(!userToggledBGM);
     toggleMusic();
   };
 
@@ -112,6 +124,13 @@ const GamePage = () => {
     setTimeLeft(30);
     setGameStatus("playing");
     generateBalloons(city);
+
+    // Restart BGM if user hasn't toggled it off
+    if (!userToggledBGM && audioBGM) {
+      setIsBGMPlaying(true);
+      audioBGM.currentTime = 0;
+      audioBGM.play().catch((error) => console.log("BGM play error:", error));
+    }
   };
 
   // Generate Balloons
@@ -143,7 +162,14 @@ const GamePage = () => {
 
   useEffect(() => {
     if (gameStatus !== "playing") {
-      if (isBGMPlaying) toggleMusic();
+      // if (isBGMPlaying) toggleMusic();
+
+      if (isBGMPlaying && audioBGM) {
+        audioBGM.pause();
+        audioBGM.currentTime = 0;
+        setIsBGMPlaying(false);
+      }
+
       if (gameStatus === "won") {
         const finishedTime = 30 - timeLeft;
         setFinishingTime(finishedTime);
