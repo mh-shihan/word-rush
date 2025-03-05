@@ -55,7 +55,7 @@ The main goal of the game is to correctly spell the city name displayed at the *
 
 ## 🔗 Live Demo
 
-👉 [Play Word Rush - The Balloon Popper Game](http://glistening-condition.surge.sh)
+👉 [Play Word Rush - The Balloon Popper Game](https://jazzy-kulfi-2529f5.netlify.app)
 
 ## 📂 GitHub Repository
 
