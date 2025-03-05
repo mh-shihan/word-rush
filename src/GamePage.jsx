@@ -7,7 +7,6 @@ import balloonPunch from "./assets/audio/balloon_punch.wav";
 import winningMp3 from "./assets/audio/winning.mp3";
 import gameOver from "./assets/audio/game-over.mp3";
 import confetti from "https://cdn.skypack.dev/canvas-confetti";
-
 // List of Bangladeshi cities
 const CITIES = [
   "Dhaka",
@@ -39,11 +38,12 @@ const GamePage = () => {
   const [currentCity, setCurrentCity] = useState("");
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [finishingTime, setFinishingTime] = useState(0);
   const [gameStatus, setGameStatus] = useState("playing");
   const [balloons, setBalloons] = useState([]);
 
   // Audio State
-  const [isBGMPlaying, setIsBGMPlaying] = useState(false);
+  const [isBGMPlaying, setIsBGMPlaying] = useState(true);
   const [audioBGM, setAudioBGM] = useState(null);
   const [balloonPop, setBalloonPop] = useState(null);
   const [winAudio, setWinAudio] = useState(null);
@@ -114,6 +114,7 @@ const GamePage = () => {
     generateBalloons(city);
   };
 
+  // Generate Balloons
   const generateBalloons = (city) => {
     const cityLetters = city.split("");
     const allLetters = [...cityLetters];
@@ -144,6 +145,8 @@ const GamePage = () => {
     if (gameStatus !== "playing") {
       if (isBGMPlaying) toggleMusic();
       if (gameStatus === "won") {
+        const finishedTime = 30 - timeLeft;
+        setFinishingTime(finishedTime);
         winAudio.play();
         confetti();
       } else timeOutAudio.play();
@@ -211,8 +214,19 @@ const GamePage = () => {
         {gameStatus !== "playing" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white p-8 rounded-lg text-center">
-              <h2 className="text-2xl font-bold mb-4">
-                {gameStatus === "won" ? "Congratulations!" : "Time's Up!"}
+              <h2 className="  mb-4">
+                {gameStatus === "won" ? (
+                  <div>
+                    <p className="text-2xl text-green-600 font-bold">
+                      Congratulations!
+                    </p>
+                    <p className="text-lg font-medium">
+                      You take {finishingTime} seconds
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-2xl font-bold"> Time's Up!</p>
+                )}
               </h2>
               <div className="flex gap-10">
                 {/* Status Button */}
